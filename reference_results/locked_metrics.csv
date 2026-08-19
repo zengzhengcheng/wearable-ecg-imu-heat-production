@@ -1,0 +1,5 @@
+result,r2
+traditional_deployment,0.675
+wearable_uncalibrated,0.710
+wearable_fixed_2d_calibration,0.800
+traditional_baseline,0.432
