@@ -3,7 +3,8 @@ message: "If you use this code, please cite the associated article."
 title: "Wearable ECG–IMU sensing: Predicting heat production in growing pigs with short-term calorimetry calibration"
 type: software
 authors:
-  - name: "Project contributors"
+  - family-names: "Zeng"
+    given-names: "Zhengcheng"
 version: 1.0.0
 date-released: 2026-08-19
 license: MIT
