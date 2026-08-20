@@ -13,6 +13,7 @@
 | Coverage of 24 pig-by-period experimental units over 118 cumulative monitoring days (40 calendar dates; experimental day = 09:00 to the following 09:00) | `data/analysis/modeling_panel_30min.csv` | Figure S1 |
 | Representative ECG, software-detected R peaks and simultaneous IMU | `reference_results/supplementary/signal_quality_*.csv` plus candidate-review assets | Figure S2 |
 | Data-screening counts from 34,109 records to 4,079 windows | `reference_results/supplementary/screening_counts.csv` | Figure S3 |
+| Actual locked fold components and X columns | `reference_results/locked_model_components_by_fold.csv` and `locked_model_features_by_fold.csv` | Methods/input audit |
 
 `scripts/03_reproduce_results_and_figures.py` asserts the locked numerical values before saving Figures 2–4. It reads only deposited panel/result assets and does not rerun model selection, training or calibration-strength search.
 

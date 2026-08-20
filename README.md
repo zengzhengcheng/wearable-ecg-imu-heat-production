@@ -41,7 +41,15 @@ The optional formal nested training entry reads the repository panel by default:
 
 ```bash
 python scripts/02_run_nested_pig_cv.py --mode validate
+python scripts/05_audit_locked_model_inputs.py
 ```
+
+`scripts/02_run_nested_pig_cv.py` plus `src/formal_model_core.py` form the
+actual locked training implementation: the core supplies the nested-CV engine,
+and script 02 supplies the final four feature branches and 17-candidate
+confirmation library. The core module alone is not the complete locked
+configuration. Script 05 is audit-only: it does not fit models and verifies
+the deposited per-fold members, full input-column lists and locked predictions.
 
 Model evaluation is grouped by true pig identity. Do not substitute a date holdout/GKF-Day analysis for the locked manuscript protocol.
 
@@ -54,6 +62,7 @@ Model evaluation is grouped by true pig identity. Do not substitute a date holdo
 - Individual calibration: for each held-out experimental unit, the ratio of mean observed to mean predicted HP over phases 0–1 (first 2 d) is shrunk with fixed `alpha = 0.5`; only the 1,718 fed measurement windows in phases 2–3 (888 + 830) are adjusted, while all 752 phase-4 fasting predictions remain unchanged. The reported post-adaptation metrics use all 2,470 phase-2/3/4 windows.
 - Dietary treatment code is audit metadata and is excluded from every formal predictor branch.
 - Planned feed and protocol meal timing describe offered feed and scheduled meals, not measured intake events.
+- Every locked fold component receives `chamber` and `phase_label` as one-hot categorical inputs and receives `is_adaptation`, `is_formal`, `is_fasting`, `day_in_phase` and `win_s` as numeric inputs. These are not audit-only fields. `win_s` is the source calorimetry-record interval used to set the backward sensor-extraction duration; prospective wearable-only use must supply or prespecify the corresponding window duration.
 
 ## Locked manuscript results
 
@@ -81,8 +90,10 @@ The recommended processing release is **SwineSync OpenSource v1.1.1** ([release]
 - `scripts/02_run_nested_pig_cv.py`: formal pig-grouped nested training/evaluation.
 - `scripts/03_reproduce_results_and_figures.py`: saved-result verification and Figures 2–4.
 - `scripts/04_reproduce_supplementary_figures.py`: deposited-source verification and Figures S1–S3.
+- `scripts/05_audit_locked_model_inputs.py`: no-training audit of the locked fold members and actual X columns.
 - `docs/input_data_contract.md`: upstream source-data contract.
 - `docs/results_map.md`: manuscript result/figure mapping.
+- `docs/locked_model_input_audit.md`: per-fold locked components, actual input roles and implementation boundary.
 
 ## Citation and license
 

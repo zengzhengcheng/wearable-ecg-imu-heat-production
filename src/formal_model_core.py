@@ -1,4 +1,13 @@
-"""Strict nested modeling of the 2026-only growing-pig feed/HR/IMU panel.
+"""Shared nested-CV engine for the locked 2026 growing-pig model.
+
+This module supplies preprocessing, candidate estimators, grouped inner/outer
+selection, seed averaging and fixed-alpha calibration.  The complete locked
+training implementation is this module *together with*
+``scripts/02_run_nested_pig_cv.py``.  That entry adds the four confirmation
+branches and four post-exploration candidates used to generate the deposited
+``blend_top3`` out-of-fold predictions.  Running only ``feature_variants()``
+from this core describes the earlier base library, not the final locked branch
+set.
 
 Feature branches (diet categories removed from all features)
 ------------------------------------------------------------
@@ -8,6 +17,11 @@ Four compact branches form a feeding-information ladder: ``compact_base``
 ``compact_feed_fullfeeding`` (+ premeal sensor baseline and meal-sensor
 interactions).  ``diet_code`` survives as an audit label only and never
 enters numeric or categorical model features.
+
+All locked branches include numeric ``is_fasting``, ``day_in_phase``,
+``win_s``, ``is_adaptation`` and ``is_formal`` plus categorical ``chamber``
+and ``phase_label``.  These are actual columns passed to the estimator's X
+matrix, not audit-only fields.  ``diet_code`` remains audit-only.
 
 Hybrid per-pig/per-unit calibration
 -----------------------------------

@@ -157,7 +157,7 @@ def draw_fig2(folds: pd.DataFrame, output_dir: Path) -> None:
 
 def draw_fig3(predictions: pd.DataFrame, stages: pd.DataFrame, output_dir: Path) -> None:
     followup = predictions["is_followup_evaluation"].astype(str).str.lower().eq("true").to_numpy()
-    panels = [("All stages\nUncalibrated", np.ones(len(predictions), bool), "predicted_HP_raw", COLORS["blue"]), ("After initial 2 d\nUncalibrated", followup, "predicted_HP_raw", COLORS["blue"]), ("After initial 2 d\nFixed calibration", followup, "predicted_HP_calibrated", COLORS["green"])]
+    panels = [("Full period\nUncalibrated", np.ones(len(predictions), bool), "predicted_HP_raw", COLORS["blue"]), ("Post-adaptation period\nUncalibrated", followup, "predicted_HP_raw", COLORS["blue"]), ("Post-adaptation period\nIndividual calibration", followup, "predicted_HP_calibrated", COLORS["green"])]
     values = predictions[["observed_HP", "predicted_HP_raw", "predicted_HP_calibrated"]].to_numpy(float)
     low, high = np.floor(values.min() / 5) * 5, np.ceil(values.max() / 5) * 5
     fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.7), sharex=True, sharey=True)
@@ -169,6 +169,11 @@ def draw_fig3(predictions: pd.DataFrame, stages: pd.DataFrame, output_dir: Path)
         axes[index].set_title(f"{chr(65 + index)}  {title}", loc="left", fontweight="bold", fontsize=8)
         axes[index].text(0.05, 0.93, f"n = {int(stages.iloc[index]['n']):,}\n$R^2$ = {stages.iloc[index]['r2_HP']:.3f}", transform=axes[index].transAxes, va="top")
     axes[0].set_ylabel("Predicted HP (kcal per 30 min)")
+    fig.suptitle(
+        "Prediction across the full and post-adaptation periods, with and without individual calibration",
+        y=1.02,
+        fontsize=9.5,
+    )
     fig.tight_layout()
     save_figure(fig, output_dir, "fig3_main_prediction_calibration")
 

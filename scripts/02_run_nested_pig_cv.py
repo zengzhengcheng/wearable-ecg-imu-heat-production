@@ -1,11 +1,12 @@
-"""Post-exploration strict confirmation of the 2026-only diet panel.
+"""Locked post-exploration confirmation of the 2026-only diet panel.
 
 The exploration screen (``model_2026_diet_explore.py``) identified the
 final configuration: four feature branches (the two strongest compact
 branches from the formal nested run plus their full-motion counterparts)
 and a seventeen-candidate library (the frozen thirteen plus cat_d4,
-cat_d8, lgb_deep and xgb_d5).  This script re-runs the *exact* strict
-nested machinery of ``formal_model_core.py`` — same ``run_nested``,
+cat_d8, lgb_deep and xgb_d5).  This is the public training entry that
+produced the locked protocol.  It runs the strict nested machinery of
+``formal_model_core.py`` — same ``run_nested``,
 same grouped splits, same inner model/branch selection, same hybrid
 calibration layers — with only the branch set and candidate library
 swapped.  Nothing is re-selected from exploration outputs; every outer
@@ -25,23 +26,33 @@ The ``full_`` prefix makes ``candidate_allowed`` automatically exclude
 svr_rbf (``exclude_full=True``) from the two high-dimensional branches.
 ``diet_code`` never enters any numeric feature (asserted).
 
+The two files are one implementation: ``formal_model_core.py`` is the shared
+engine/base library, whereas this entry defines the four locked branches and
+the 17-candidate confirmation library.  Do not treat the core module alone as
+the complete locked configuration.
+
 Examples
 --------
-python model_2026_diet_confirm.py --mode validate
-python model_2026_diet_confirm.py --mode smoke --scenario both
-python model_2026_diet_confirm.py --mode evaluate --scenario both
+python scripts/02_run_nested_pig_cv.py --mode validate
+python scripts/02_run_nested_pig_cv.py --mode smoke --scenario GKF_Pig
+python scripts/02_run_nested_pig_cv.py --mode evaluate --scenario GKF_Pig
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-import formal_model_core as core
-
-
 PROJECT = Path(__file__).resolve().parents[1]
+SRC = PROJECT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+import formal_model_core as core  # noqa: E402
+
+
 DEFAULT_ROOT = PROJECT / "results"
 DEFAULT_PANEL = PROJECT / "data" / "analysis" / "modeling_panel_30min.csv"
 DEFAULT_GROUPS = PROJECT / "data" / "analysis" / "feature_groups.json"
