@@ -1,2 +1,2 @@
-﻿seg_id,kind,chamber,pig,date,t_start,dur_s,stratum,ODBA_mean,HR_mean,RR_cv,beat_count,phase_idx
-,figs2,A1,pig_13,2026-06-27,2026-06-27 18:21:08,20,rest,0.0087703414634146,105.08876896464962,0.0157852472735696,361,2
+seg_id,kind,chamber,pig,date,t_start,t_end,dur_s,stratum,ODBA_mean,HR_mean,HR_mean_5min,RR_cv,beat_count,phase_idx,bsqi_50ms,min_RR_ms,selection_source
+candidate_09,figs2,A1,pig_11,2026-07-01,2026-07-01 07:08:07,2026-07-01 07:08:27,20,rest,0.0044120975609755,78.75255945818239,79.99052602690739,0.0501311688797403,26,0,1.0,705.0000000000001,check_12

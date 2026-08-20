@@ -6,7 +6,7 @@
 - `baseline_followup_results.csv`: saved predictions from parsimonious baselines on the same 2,470 follow-up windows. The traditional baseline is the heart-rate + ODBA Ridge column (R² = 0.432).
 - `feeding_followup_results.csv`: saved feeding-information comparison on the same 2,470 windows. Planned feed means offered quantity, and protocol meal timing is not measured intake.
 - `locked_metrics.csv`: manuscript-rounded values asserted by the reproduction script.
-- `supplementary/`: representative signal data and screening counts used for Figures S1 and S3; Figure S2 is derived from the formal panel.
+- `supplementary/`: coverage, objectively selected representative signal data, and screening assets used for Figures S1–S3. Figure S1 is derived from the formal panel; Figure S2 uses deposited compact ECG/R-peak/IMU source files.
 
 `scripts/03_reproduce_results_and_figures.py` reads these files directly, recalculates the metrics, verifies fixed `alpha = 0.5`, checks fold assignments and creates Figures 2–4 without model fitting or parameter search.
 

@@ -1,6 +1,6 @@
 """Verify deposited supplementary assets and reproduce Figures S1--S3.
 
-This script uses only compact repository data. Detected R peaks in Figure S1
+This script uses only compact repository data. Detected R peaks in Figure S2
 are software output, not manually adjudicated annotations or a gold standard.
 """
 
@@ -115,7 +115,7 @@ def nearest_peak_match(reference_ms: np.ndarray, comparison_ms: np.ndarray, tole
     return matched
 
 
-def figure_s1(output_dir: Path, formal_assets_dir: Path) -> None:
+def figure_s2_signal(output_dir: Path, formal_assets_dir: Path) -> None:
     ecg = pd.read_csv(ECG_PATH)
     imu = pd.read_csv(IMU_PATH)
     peaks = pd.read_csv(PEAKS_PATH)
@@ -125,22 +125,25 @@ def figure_s1(output_dir: Path, formal_assets_dir: Path) -> None:
     detected = peaks.loc[peaks["source"] == "cleanlabels", "t_rel_s"].to_numpy(float)
     comparison = peaks.loc[peaks["source"] == "pt_refined", "t_rel_s"].to_numpy(float)
     if not (19.9 <= float(ecg["t_rel_s"].max()) <= 20.1 and duration == 20.0):
-        raise AssertionError("Figure S1 source is not the expected 20-s segment")
-    if len(detected) != 35 or len(comparison) != 35:
-        raise AssertionError("Figure S1 peak counts differ from the deposited segment")
+        raise AssertionError("Figure S2 source is not the expected 20-s segment")
+    expected_peaks = int(metadata["beat_count"])
+    if len(detected) != expected_peaks or len(comparison) != expected_peaks:
+        raise AssertionError("Figure S2 peak counts differ from the deposited segment")
     matched = nearest_peak_match(detected * 1000.0, comparison * 1000.0)
     union = len(detected) + len(comparison) - matched
     bsqi = matched / union if union else np.nan
-    if not np.isclose(bsqi, 1.0):
+    if not np.isclose(bsqi, float(metadata["bsqi_50ms"])):
         raise AssertionError(f"unexpected cross-detector bSQI: {bsqi}")
 
-    fig, (ax_ecg, ax_imu) = plt.subplots(
-        2,
-        1,
-        figsize=(7.2, 4.8),
-        sharex=True,
-        gridspec_kw={"height_ratios": [2.4, 1.6], "hspace": 0.28},
-    )
+    fig = plt.figure(figsize=(7.05, 5.1))
+    grid = fig.add_gridspec(4, 1, height_ratios=[0.34, 2.4, 0.34, 1.6], hspace=0.10)
+    ecg_header = fig.add_subplot(grid[0])
+    ax_ecg = fig.add_subplot(grid[1])
+    imu_header = fig.add_subplot(grid[2])
+    ax_imu = fig.add_subplot(grid[3], sharex=ax_ecg)
+    for header in (ecg_header, imu_header):
+        header.set_axis_off()
+
     ax_ecg.plot(ecg["t_rel_s"], ecg["ecg"], color=COLORS["dark"], lw=0.7, label="Raw ECG (512 Hz)")
     peak_y = np.interp(detected, ecg["t_rel_s"], ecg["ecg"])
     offset = 0.09 * float(ecg["ecg"].max() - ecg["ecg"].min())
@@ -154,12 +157,16 @@ def figure_s1(output_dir: Path, formal_assets_dir: Path) -> None:
         label=f"Detected R peaks (n={len(detected)})",
     )
     ax_ecg.set_ylabel("ECG (a.u.)")
-    ax_ecg.set_title(
-        f"a  ECG with software-detected R peaks — {metadata['pig']}, chamber {metadata['chamber']}, {metadata['date']}"
-        f"  (cross-detector bSQI at 50 ms = {bsqi:.3f})",
-        loc="left",
+    ax_ecg.tick_params(axis="x", which="both", labelbottom=False)
+    ecg_header.text(0.0, 0.5, "a  Raw ECG with software-detected R peaks", ha="left", va="center", fontsize=10, weight="bold")
+    ecg_header.legend(
+        handles=ax_ecg.get_legend_handles_labels()[0],
+        labels=ax_ecg.get_legend_handles_labels()[1],
+        loc="center right",
+        frameon=False,
+        ncol=2,
+        borderaxespad=0,
     )
-    ax_ecg.legend(loc="upper right", frameon=False)
     ax_ecg.grid(axis="x", alpha=0.18, lw=0.5)
 
     for column, color, linestyle, label in (
@@ -171,20 +178,26 @@ def figure_s1(output_dir: Path, formal_assets_dir: Path) -> None:
     ax_imu.set_xlim(0, duration)
     ax_imu.set_xlabel("Time within segment (s)")
     ax_imu.set_ylabel("Acceleration (g)")
-    ax_imu.set_title("b  Simultaneous 10 Hz tri-axial acceleration", loc="left")
-    ax_imu.legend(loc="upper right", frameon=False, ncol=3)
+    imu_header.text(0.0, 0.5, "b  Simultaneous 10 Hz tri-axial acceleration", ha="left", va="center", fontsize=10, weight="bold")
+    imu_header.legend(
+        handles=ax_imu.get_legend_handles_labels()[0],
+        labels=ax_imu.get_legend_handles_labels()[1],
+        loc="center right",
+        frameon=False,
+        ncol=3,
+        borderaxespad=0,
+    )
     ax_imu.grid(axis="x", alpha=0.18, lw=0.5)
     fig.suptitle(
-        f"Representative 20-s signal segment (rest; ODBA={float(metadata['ODBA_mean']):.3f} g; "
-        f"HR={float(metadata['HR_mean']):.0f} bpm)",
-        y=0.99,
-        fontsize=10.5,
+        "Representative synchronized ECG and IMU segment",
+        y=0.995,
+        fontsize=12,
     )
-    fig.subplots_adjust(top=0.86, bottom=0.11, left=0.10, right=0.98)
-    save_figure(fig, output_dir, "figS1_signal_quality", formal_assets_dir, "Figure_S1")
+    fig.subplots_adjust(top=0.92, bottom=0.10, left=0.10, right=0.98)
+    save_figure(fig, output_dir, "figS2_signal_quality", formal_assets_dir, "Figure_S2")
 
 
-def figure_s2(panel: pd.DataFrame, output_dir: Path, formal_assets_dir: Path) -> None:
+def figure_s1_coverage(panel: pd.DataFrame, output_dir: Path, formal_assets_dir: Path) -> None:
     required = {"experimental_unit", "pig", "chamber", "period", "strict_day_group"}
     if not required.issubset(panel.columns):
         raise AssertionError(f"panel lacks coverage fields: {sorted(required - set(panel.columns))}")
@@ -204,9 +217,9 @@ def figure_s2(panel: pd.DataFrame, output_dir: Path, formal_assets_dir: Path) ->
     chambers = sorted(units["chamber"].astype(str).unique())
     cumulative_monitoring_days = int(len(coverage))
     if (len(units), len(days), panel["pig"].nunique(), chambers) != (24, 40, 12, ["A1", "B1", "B2"]):
-        raise AssertionError("Figure S2 coverage scope differs from 24 experimental units / 40 dates / 12 pigs / A1-B1-B2")
+        raise AssertionError("Figure S1 coverage scope differs from 24 experimental units / 40 dates / 12 pigs / A1-B1-B2")
     if cumulative_monitoring_days != 118:
-        raise AssertionError(f"Figure S2 expected 118 cumulative monitoring days, got {cumulative_monitoring_days}")
+        raise AssertionError(f"Figure S1 expected 118 cumulative monitoring days, got {cumulative_monitoring_days}")
 
     day_index = {day: index for index, day in enumerate(days)}
     styles = {
@@ -251,7 +264,7 @@ def figure_s2(panel: pd.DataFrame, output_dir: Path, formal_assets_dir: Path) ->
     ax.set_ylim(len(units) - 0.3, -0.8)
     ax.grid(axis="x", alpha=0.2, lw=0.5)
     fig.subplots_adjust(left=0.22, bottom=0.17, right=0.98, top=0.85)
-    save_figure(fig, output_dir, "figS2_coverage_calendar", formal_assets_dir, "Figure_S2")
+    save_figure(fig, output_dir, "figS1_coverage_calendar", formal_assets_dir, "Figure_S1")
 
 
 def figure_s3(output_dir: Path, formal_assets_dir: Path) -> None:
@@ -260,11 +273,19 @@ def figure_s3(output_dir: Path, formal_assets_dir: Path) -> None:
     if counts["retained_count"].astype(int).tolist() != expected:
         raise AssertionError("Figure S3 screening counts differ from locked values")
 
-    fig, ax = plt.subplots(figsize=(7.8, 8.2))
+    fig, ax = plt.subplots(figsize=(7.05, 6.0))
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis("off")
-    y_positions = np.linspace(0.92, 0.08, len(counts))
+    centers = [
+        (0.22, 0.82),
+        (0.78, 0.82),
+        (0.78, 0.58),
+        (0.22, 0.58),
+        (0.22, 0.34),
+        (0.78, 0.34),
+        (0.78, 0.10),
+    ]
     stage_colors = [
         COLORS["navy"],
         COLORS["blue"],
@@ -275,45 +296,78 @@ def figure_s3(output_dir: Path, formal_assets_dir: Path) -> None:
         COLORS["navy"],
     ]
     stage_labels = [
-        "Raw 5-min heat-production records",
+        "Raw 5-min heat-production\nrecords",
         "HP > 0",
         "Deduplicated pig × timestamp",
         "Source-level quality control",
         "Candidate 30-min windows",
-        "30-min windows with ≥3 source records",
-        "Final windows with valid-HR fraction ≥50%",
+        "30-min windows with ≥3\nsource records",
+        "Final windows with valid-HR\nfraction ≥50%",
     ]
-    removal_labels = [
+    stage_notes = [
+        "",
         "83 non-positive records excluded",
         "33 duplicate records excluded",
         "3,993 records excluded by source-level QC",
-        "Aggregated into 4,518 candidate 30-min windows",
+        "30,000 source records aggregated into candidates",
         "138 incomplete candidate windows excluded",
         "301 windows excluded for insufficient HR coverage",
     ]
-
-    for index, (y, count, label, color) in enumerate(zip(y_positions, expected, stage_labels, stage_colors)):
+    box_width = 0.40
+    box_height = 0.18
+    for index, ((x, y), count, label, note, color) in enumerate(zip(centers, expected, stage_labels, stage_notes, stage_colors)):
+        filled = index in (0, 6)
         box = FancyBboxPatch(
-            (0.16, y - 0.042),
-            0.68,
-            0.084,
-            boxstyle="round,pad=0.012,rounding_size=0.012",
-            linewidth=0.8,
+            (x - box_width / 2, y - box_height / 2),
+            box_width,
+            box_height,
+            boxstyle="round,pad=0.012,rounding_size=0.018",
+            linewidth=1.2,
             edgecolor=color,
-            facecolor=color if index in (0, 5) else "white",
+            facecolor=color if filled else "white",
         )
         ax.add_patch(box)
-        text_color = "white" if index in (0, 5) else COLORS["dark"]
-        ax.text(0.50, y + 0.013, label, ha="center", va="center", color=text_color, fontsize=9.2, weight="bold")
+        text_color = "white" if filled else COLORS["dark"]
+        ax.text(
+            x - box_width / 2 + 0.035,
+            y + box_height / 2 - 0.028,
+            str(index + 1),
+            ha="center",
+            va="center",
+            color="white",
+            fontsize=9.5,
+            weight="bold",
+            bbox={"boxstyle": "circle,pad=0.22", "facecolor": color, "edgecolor": "none"},
+            zorder=4,
+        )
+        ax.text(x, y + 0.040, label, ha="center", va="center", color=text_color, fontsize=11.2, weight="bold", linespacing=1.05)
         unit = "records" if index < 4 else "windows"
-        ax.text(0.50, y - 0.021, f"n = {count:,} {unit}", ha="center", va="center", color=text_color, fontsize=9)
-        if index < len(expected) - 1:
-            next_y = y_positions[index + 1]
-            arrow = FancyArrowPatch((0.50, y - 0.046), (0.50, next_y + 0.046), arrowstyle="-|>", mutation_scale=11, lw=0.8, color=COLORS["gray"])
-            ax.add_patch(arrow)
-            ax.text(0.855, (y + next_y) / 2, removal_labels[index], ha="left", va="center", fontsize=7.7, color=COLORS["dark"])
-    ax.set_title("Data-screening workflow for the formal 30-min modeling panel", loc="left", pad=8, fontsize=11)
-    fig.subplots_adjust(left=0.03, right=0.76, top=0.93, bottom=0.03)
+        ax.text(x, y - 0.010, f"n = {count:,} {unit}", ha="center", va="center", color=text_color, fontsize=10.4)
+        if note:
+            ax.text(x, y - 0.060, note, ha="center", va="center", color=text_color, fontsize=9.2)
+
+    arrow_points = [
+        ((0.42, 0.82), (0.58, 0.82)),
+        ((0.78, 0.73), (0.78, 0.67)),
+        ((0.58, 0.58), (0.42, 0.58)),
+        ((0.22, 0.49), (0.22, 0.43)),
+        ((0.42, 0.34), (0.58, 0.34)),
+        ((0.78, 0.25), (0.78, 0.19)),
+    ]
+    for start, end in arrow_points:
+        ax.add_patch(
+            FancyArrowPatch(
+                start,
+                end,
+                arrowstyle="-|>",
+                mutation_scale=14,
+                lw=1.2,
+                color=COLORS["gray"],
+                zorder=2,
+            )
+        )
+    ax.set_title("Data-screening workflow for the formal 30-min modeling panel", loc="left", pad=10, fontsize=14)
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.90, bottom=0.02)
     save_figure(fig, output_dir, "figS3_screening_flow", formal_assets_dir, "Figure_S3")
 
 
@@ -343,7 +397,7 @@ def main() -> None:
     peaks = pd.read_csv(PEAKS_PATH)
     metadata = pd.read_csv(METADATA_PATH)
     screening = pd.read_csv(SCREENING_PATH)
-    if (len(ecg), len(imu), len(peaks), len(metadata), len(screening)) != (10241, 200, 70, 1, 7):
+    if (len(ecg), len(imu), len(peaks), len(metadata), len(screening)) != (10241, 200, 52, 1, 7):
         raise AssertionError("supplementary source-asset dimensions differ from the deposited release")
     coverage_scope = (
         panel["experimental_unit"].nunique(),
@@ -356,8 +410,8 @@ def main() -> None:
         raise AssertionError("screening-count sequence mismatch")
 
     if not args.no_figures:
-        figure_s1(args.output_dir, args.formal_assets_dir)
-        figure_s2(panel, args.output_dir, args.formal_assets_dir)
+        figure_s1_coverage(panel, args.output_dir, args.formal_assets_dir)
+        figure_s2_signal(args.output_dir, args.formal_assets_dir)
         figure_s3(args.output_dir, args.formal_assets_dir)
     print("SUPPLEMENTARY_REPRODUCIBILITY_PASS figures=S1,S2,S3")
 
