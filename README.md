@@ -21,9 +21,10 @@ Install the environment and run the saved-prediction workflow:
 conda env create -f environment.yml
 conda activate pig-hp
 python scripts/03_reproduce_results_and_figures.py
+python scripts/04_reproduce_supplementary_figures.py
 ```
 
-This verifies the four locked R² values and writes Figures 2–4 under `results/reproduced/`. It does not retrain, search models or tune calibration.
+This verifies the four locked R² values and writes main Figures 2–4 plus supplementary Figures S1–S3 under `results/reproduced/`. It does not retrain, search models or tune calibration.
 
 ### Rebuild from source measurements
 
@@ -79,6 +80,7 @@ The related processing code is archived as **SwineSync-OpenSource** ([DOI](https
 - `scripts/01_build_30min_panel.py`: optional panel reconstruction.
 - `scripts/02_run_nested_pig_cv.py`: formal pig-grouped nested training/evaluation.
 - `scripts/03_reproduce_results_and_figures.py`: saved-result verification and Figures 2–4.
+- `scripts/04_reproduce_supplementary_figures.py`: deposited-source verification and Figures S1–S3.
 - `docs/input_data_contract.md`: upstream source-data contract.
 - `docs/results_map.md`: manuscript result/figure mapping.
 

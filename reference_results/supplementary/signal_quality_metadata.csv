@@ -1,0 +1,2 @@
+﻿seg_id,kind,chamber,pig,date,t_start,dur_s,stratum,ODBA_mean,HR_mean,RR_cv,beat_count,phase_idx
+,figs2,A1,pig_13,2026-06-27,2026-06-27 18:21:08,20,rest,0.0087703414634146,105.08876896464962,0.0157852472735696,361,2
