@@ -28,7 +28,7 @@ This verifies the four locked R² values and writes main Figures 2–4 plus supp
 
 ### Rebuild from source measurements
 
-Download the ScienceDB deposit, perform format conversion and automated quality checks with the companion software, then run the extraction and panel-building entries:
+Download the ScienceDB deposit, perform format conversion and automated quality checks with the recommended **SwineSync OpenSource v1.1.1** companion release, then run the extraction and panel-building entries. This release accepts only the new-device tab-separated `ECGRawData`, `ECGHeartRateData`, and `IMUData` inputs; legacy `Raw`, `BMD`, and `Angle` formats are not supported.
 
 ```bash
 python src/extract_heat_production.py
@@ -51,7 +51,7 @@ Model evaluation is grouped by true pig identity. Do not substitute a date holdo
 - Inner selection: three-fold pig-grouped cross-validation within each outer-training set.
 - Fit target: HP normalized by metabolic body weight (`HP_per_W075`).
 - Reported target: `HP_kcal` is the mean 5-min HP quantity represented by each 30-min window and is multiplied by 6 for reporting in kcal per 30 min. The public saved prediction file already contains reported 30-min values.
-- Individual calibration: for each held-out experimental unit, the ratio of mean observed to mean predicted HP over phases 0–1 (first 2 d) is shrunk with fixed `alpha = 0.5`; only fed follow-up phases 2–3 are adjusted, while phase 4 fasting predictions remain unchanged.
+- Individual calibration: for each held-out experimental unit, the ratio of mean observed to mean predicted HP over phases 0–1 (first 2 d) is shrunk with fixed `alpha = 0.5`; only the 1,718 fed measurement windows in phases 2–3 (888 + 830) are adjusted, while all 752 phase-4 fasting predictions remain unchanged. The reported post-adaptation metrics use all 2,470 phase-2/3/4 windows.
 - Dietary treatment code is audit metadata and is excluded from every formal predictor branch.
 - Planned feed and protocol meal timing describe offered feed and scheduled meals, not measured intake events.
 
@@ -70,7 +70,7 @@ Exact saved values and manuscript rounding are verified by `scripts/03_reproduce
 
 This dataset does not provide manually annotated ECG-quality labels or a manually adjudicated R-peak gold standard. Do not describe software-generated detections as human annotation or ground truth.
 
-The related processing code is archived as **SwineSync-OpenSource** ([DOI](https://doi.org/10.5281/zenodo.20051135)); ECG detector training code is archived as **ECG-TransUNet** ([DOI](https://doi.org/10.5281/zenodo.20051167)). The exact cleaning, synchronization, exclusion and final-window rules used in the paper are represented by this repository's scripts and deposited modeling panel.
+The recommended processing release is **SwineSync OpenSource v1.1.1** ([release](https://github.com/zengzhengcheng/SwineSync-OpenSource/releases/tag/v1.1.1); [software DOI](https://doi.org/10.5281/zenodo.20051135)). It supports multi-folder conversion, per-folder file selection/inspection, file-level resume/skip behavior, short-file safety checks, heart-rate processing and IMU processing for new-device inputs only; it does not support legacy `Raw`, `BMD`, or `Angle` data. The packaged **SwineSync Studio v1.1.0** is distributed separately from its [binary-release repository](https://github.com/zengzhengcheng/SwineSync-Studio). ECG detector training code is archived as **ECG-TransUNet** ([DOI](https://doi.org/10.5281/zenodo.20051167)). The exact cleaning, synchronization, exclusion and final-window rules used in the paper are represented by this repository's scripts and deposited modeling panel.
 
 ## Repository map
 

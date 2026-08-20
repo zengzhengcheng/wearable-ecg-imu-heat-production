@@ -167,8 +167,11 @@ def figure_s2(panel: pd.DataFrame, output_dir: Path) -> None:
     )
     days = sorted(coverage["strict_day_group"].astype(str).unique())
     chambers = sorted(units["chamber"].astype(str).unique())
+    cumulative_monitoring_days = int(len(coverage))
     if (len(units), len(days), panel["pig"].nunique(), chambers) != (24, 40, 12, ["A1", "B1", "B2"]):
-        raise AssertionError("Figure S2 coverage scope differs from 24 units / 40 days / 12 pigs / A1-B1-B2")
+        raise AssertionError("Figure S2 coverage scope differs from 24 experimental units / 40 dates / 12 pigs / A1-B1-B2")
+    if cumulative_monitoring_days != 118:
+        raise AssertionError(f"Figure S2 expected 118 cumulative monitoring days, got {cumulative_monitoring_days}")
 
     day_index = {day: index for index, day in enumerate(days)}
     styles = {
@@ -203,8 +206,13 @@ def figure_s2(panel: pd.DataFrame, output_dir: Path) -> None:
         for chamber in chambers
     ]
     ax.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.0, 1.005), frameon=False, ncol=3, borderaxespad=0)
-    ax.set_xlabel("Strict experiment day (09:00 boundary)")
-    ax.set_title("Monitoring coverage across 24 pig-by-period units and 40 strict days", loc="left", pad=34)
+    ax.set_xlabel("Experimental date (experimental day: 09:00 to 09:00 the following day)")
+    ax.set_title(
+        "Monitoring coverage across 24 pig-by-period experimental units "
+        f"({cumulative_monitoring_days} cumulative monitoring days)",
+        loc="left",
+        pad=34,
+    )
     ax.set_ylim(len(units) - 0.3, -0.8)
     ax.grid(axis="x", alpha=0.2, lw=0.5)
     fig.subplots_adjust(left=0.22, bottom=0.17, right=0.98, top=0.85)

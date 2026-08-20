@@ -7,13 +7,13 @@ experimental_unit,identity_and_experimental_unit,"Identifier used to trace the a
 legacy_pig,identity_and_experimental_unit,"Identifier used to trace the animal, chamber, period, or experimental unit.",dimensionless or categorical,no,not a formal predictor,yes,no,no,
 period,identity_and_experimental_unit,"Identifier used to trace the animal, chamber, period, or experimental unit.",dimensionless or categorical,no,not a formal predictor,yes,no,no,
 datetime,time_and_window,Right-aligned timestamp of the 30-min analysis window.,dimensionless or categorical,no,not a formal predictor,no,yes,yes,
-weight,body_weight,Analysis-panel field weight.,kg,yes,eligible in one or more locked confirmation branches,no,no,no,
+weight,body_weight,Time-varying body-weight input retained exactly as used in the locked analysis panel.,kg,yes,eligible in one or more locked confirmation branches,no,no,no,Derived analysis input; not a new weighing at every 30-min window. Source/audit weight fields are retained separately and are not direct predictors.
 weight_start,body_weight,Analysis-panel field weight_start.,kg,no,not a formal predictor,no,no,no,
 weight_end,body_weight,Analysis-panel field weight_end.,kg,no,not a formal predictor,no,no,no,
-adapt_weight_kg,body_weight,Analysis-panel field adapt_weight_kg.,kg,no,not a formal predictor,no,no,no,
-formal_weight_kg,body_weight,Analysis-panel field formal_weight_kg.,kg,no,not a formal predictor,no,no,no,
-prefast_weight_kg,body_weight,Analysis-panel field prefast_weight_kg.,kg,no,not a formal predictor,no,no,no,
-postfast_weight_kg,body_weight,Analysis-panel field postfast_weight_kg.,kg,no,not a formal predictor,no,no,no,
+adapt_weight_kg,body_weight,Archived source/audit body-weight field (adapt_weight_kg); retained for traceability and not used directly as a formal predictor.,kg,no,not a formal predictor,no,no,no,Audit/source field only; its label must not be interpreted as an additional confirmed public weighing time.
+formal_weight_kg,body_weight,Archived source/audit body-weight field (formal_weight_kg); retained for traceability and not used directly as a formal predictor.,kg,no,not a formal predictor,no,no,no,Audit/source field only; its label must not be interpreted as an additional confirmed public weighing time.
+prefast_weight_kg,body_weight,Archived source/audit body-weight field (prefast_weight_kg); retained for traceability and not used directly as a formal predictor.,kg,no,not a formal predictor,no,no,no,Audit/source field only; its label must not be interpreted as an additional confirmed public weighing time.
+postfast_weight_kg,body_weight,Archived source/audit body-weight field (postfast_weight_kg); retained for traceability and not used directly as a formal predictor.,kg,no,not a formal predictor,no,no,no,Audit/source field only; its label must not be interpreted as an additional confirmed public weighing time.
 weight_fraction_phase,body_weight,Analysis-panel field weight_fraction_phase.,fraction,no,not a formal predictor,no,no,no,
 weight_anchor_start_kg,body_weight,Analysis-panel field weight_anchor_start_kg.,kg,no,not a formal predictor,no,no,no,
 weight_anchor_end_kg,body_weight,Analysis-panel field weight_anchor_end_kg.,kg,no,not a formal predictor,no,no,no,
@@ -257,9 +257,9 @@ LyingTransitions,IMU_motion,Thirty-minute summary or coverage descriptor for the
 HeadDownTransitions,IMU_motion,Thirty-minute summary or coverage descriptor for the IMU-derived feature HeadDownTransitions.,sensor-feature dependent,yes,eligible in one or more locked confirmation branches,no,no,no,
 data_count_mean,IMU_motion,Thirty-minute summary or coverage descriptor for the IMU-derived feature data_count_mean.,sensor-feature dependent,yes,eligible in one or more locked confirmation branches,no,no,no,
 cohort,identity_and_experimental_unit,"Identifier used to trace the animal, chamber, period, or experimental unit.",dimensionless or categorical,no,not a formal predictor,yes,no,no,
-phase_idx,phase_evaluation,"Phase/evaluation field defining initial 2 d, follow-up, or fasting scope.",dimensionless or categorical,no,not a formal predictor,no,yes,yes,
+phase_idx,phase_evaluation,Protocol phase: 0–1 initial adaptation/calibration-reference days; 2–3 fed measurement days; 4 fasting day.,dimensionless or categorical,no,not a formal predictor,no,yes,yes,"Post-adaptation evaluation includes phases 2–4 (2,470 windows); fixed-alpha calibration adjusts only phases 2–3 (1,718 windows), while phase 4 remains unchanged (752 windows)."
 phase_label,phase_evaluation,"Phase/evaluation field defining initial 2 d, follow-up, or fasting scope.",dimensionless or categorical,yes,eligible in one or more locked confirmation branches,no,no,yes,
-is_fasting,phase_evaluation,"Phase/evaluation field defining initial 2 d, follow-up, or fasting scope.",fraction or binary indicator,yes,eligible in one or more locked confirmation branches,no,no,yes,
+is_fasting,phase_evaluation,Binary indicator for phase-4 fasting windows.,fraction or binary indicator,yes,eligible in one or more locked confirmation branches,no,no,yes,"Phase-4 fasting windows are included in the 2,470-window post-adaptation evaluation but are not adjusted by individual calibration."
 day_in_phase,phase_evaluation,"Phase/evaluation field defining initial 2 d, follow-up, or fasting scope.",dimensionless or categorical,yes,eligible in one or more locked confirmation branches,no,no,yes,
 diet_code,treatment_audit,Diet-treatment label retained for bookkeeping; never entered as an ordinal or categorical predictor in the locked model.,dimensionless or categorical,no,not a formal predictor,no,no,no,audit only; excluded from every formal feature branch
 feed_measurement,treatment_audit,Provenance label stating that feed values are planned/offered quantities rather than measured intake.,dimensionless or categorical,no,not a formal predictor,no,no,no,"planned/offered feed, not intake"
