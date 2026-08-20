@@ -7,7 +7,9 @@ are software output, not manually adjudicated annotations or a gold standard.
 from __future__ import annotations
 
 import argparse
+from io import BytesIO
 from pathlib import Path
+import shutil
 
 import matplotlib
 
@@ -16,6 +18,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 import numpy as np
 import pandas as pd
+from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,16 +56,48 @@ def set_style() -> None:
             "axes.spines.top": False,
             "axes.spines.right": False,
             "figure.dpi": 120,
-            "savefig.dpi": 400,
+            "savefig.dpi": 600,
             "savefig.transparent": False,
+            "savefig.facecolor": "white",
+            "svg.fonttype": "none",
+            "pdf.fonttype": 42,
         }
     )
 
 
-def save_figure(fig: plt.Figure, output_dir: Path, stem: str) -> None:
+def _save_rgb_tiff(fig: plt.Figure, path: Path) -> None:
+    buffer = BytesIO()
+    fig.savefig(buffer, format="tiff", dpi=600, bbox_inches="tight", facecolor="white", transparent=False)
+    buffer.seek(0)
+    with Image.open(buffer) as rendered:
+        if rendered.mode == "RGBA":
+            rgb = Image.new("RGB", rendered.size, "white")
+            rgb.paste(rendered, mask=rendered.getchannel("A"))
+        else:
+            rgb = rendered.convert("RGB")
+        rgb.save(path, format="TIFF", dpi=(600, 600), compression="tiff_lzw")
+
+
+def save_figure(
+    fig: plt.Figure,
+    output_dir: Path,
+    stem: str,
+    formal_assets_dir: Path,
+    formal_stem: str,
+) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
+    formal_assets_dir.mkdir(parents=True, exist_ok=True)
+    output_paths = {}
     for suffix in ("png", "svg", "pdf"):
-        fig.savefig(output_dir / f"{stem}.{suffix}", bbox_inches="tight")
+        path = output_dir / f"{stem}.{suffix}"
+        kwargs = {"dpi": 600} if suffix == "png" else {}
+        fig.savefig(path, bbox_inches="tight", facecolor="white", transparent=False, **kwargs)
+        output_paths[suffix] = path
+    tiff_path = output_dir / f"{stem}.tif"
+    _save_rgb_tiff(fig, tiff_path)
+    output_paths["tif"] = tiff_path
+    for suffix, source in output_paths.items():
+        shutil.copy2(source, formal_assets_dir / f"{formal_stem}.{suffix}")
     plt.close(fig)
 
 
@@ -80,7 +115,7 @@ def nearest_peak_match(reference_ms: np.ndarray, comparison_ms: np.ndarray, tole
     return matched
 
 
-def figure_s1(output_dir: Path) -> None:
+def figure_s1(output_dir: Path, formal_assets_dir: Path) -> None:
     ecg = pd.read_csv(ECG_PATH)
     imu = pd.read_csv(IMU_PATH)
     peaks = pd.read_csv(PEAKS_PATH)
@@ -120,7 +155,7 @@ def figure_s1(output_dir: Path) -> None:
     )
     ax_ecg.set_ylabel("ECG (a.u.)")
     ax_ecg.set_title(
-        f"a  ECG and detected R peaks — {metadata['pig']}, chamber {metadata['chamber']}, {metadata['date']}"
+        f"a  ECG with software-detected R peaks — {metadata['pig']}, chamber {metadata['chamber']}, {metadata['date']}"
         f"  (cross-detector bSQI at 50 ms = {bsqi:.3f})",
         loc="left",
     )
@@ -146,10 +181,10 @@ def figure_s1(output_dir: Path) -> None:
         fontsize=10.5,
     )
     fig.subplots_adjust(top=0.86, bottom=0.11, left=0.10, right=0.98)
-    save_figure(fig, output_dir, "figS1_signal_quality")
+    save_figure(fig, output_dir, "figS1_signal_quality", formal_assets_dir, "Figure_S1")
 
 
-def figure_s2(panel: pd.DataFrame, output_dir: Path) -> None:
+def figure_s2(panel: pd.DataFrame, output_dir: Path, formal_assets_dir: Path) -> None:
     required = {"experimental_unit", "pig", "chamber", "period", "strict_day_group"}
     if not required.issubset(panel.columns):
         raise AssertionError(f"panel lacks coverage fields: {sorted(required - set(panel.columns))}")
@@ -216,26 +251,35 @@ def figure_s2(panel: pd.DataFrame, output_dir: Path) -> None:
     ax.set_ylim(len(units) - 0.3, -0.8)
     ax.grid(axis="x", alpha=0.2, lw=0.5)
     fig.subplots_adjust(left=0.22, bottom=0.17, right=0.98, top=0.85)
-    save_figure(fig, output_dir, "figS2_coverage_calendar")
+    save_figure(fig, output_dir, "figS2_coverage_calendar", formal_assets_dir, "Figure_S2")
 
 
-def figure_s3(output_dir: Path) -> None:
+def figure_s3(output_dir: Path, formal_assets_dir: Path) -> None:
     counts = pd.read_csv(SCREENING_PATH).sort_values("stage_order")
-    expected = [34109, 34026, 33993, 30000, 4380, 4079]
+    expected = [34109, 34026, 33993, 30000, 4518, 4380, 4079]
     if counts["retained_count"].astype(int).tolist() != expected:
         raise AssertionError("Figure S3 screening counts differ from locked values")
 
-    fig, ax = plt.subplots(figsize=(7.4, 7.2))
+    fig, ax = plt.subplots(figsize=(7.8, 8.2))
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis("off")
-    y_positions = np.linspace(0.90, 0.10, len(counts))
-    stage_colors = [COLORS["navy"], COLORS["blue"], COLORS["blue"], COLORS["green"], COLORS["orange"], COLORS["navy"]]
+    y_positions = np.linspace(0.92, 0.08, len(counts))
+    stage_colors = [
+        COLORS["navy"],
+        COLORS["blue"],
+        COLORS["blue"],
+        COLORS["green"],
+        COLORS["orange"],
+        COLORS["orange"],
+        COLORS["navy"],
+    ]
     stage_labels = [
         "Raw 5-min heat-production records",
         "HP > 0",
         "Deduplicated pig × timestamp",
         "Source-level quality control",
+        "Candidate 30-min windows",
         "30-min windows with ≥3 source records",
         "Final windows with valid-HR fraction ≥50%",
     ]
@@ -243,15 +287,16 @@ def figure_s3(output_dir: Path) -> None:
         "83 non-positive records excluded",
         "33 duplicate records excluded",
         "3,993 records excluded by source-level QC",
-        "138 candidate bins / 210 source records excluded",
-        "301 windows excluded (218 with no valid HR)",
+        "Aggregated into 4,518 candidate 30-min windows",
+        "138 incomplete candidate windows excluded",
+        "301 windows excluded for insufficient HR coverage",
     ]
 
     for index, (y, count, label, color) in enumerate(zip(y_positions, expected, stage_labels, stage_colors)):
         box = FancyBboxPatch(
-            (0.16, y - 0.048),
+            (0.16, y - 0.042),
             0.68,
-            0.096,
+            0.084,
             boxstyle="round,pad=0.012,rounding_size=0.012",
             linewidth=0.8,
             edgecolor=color,
@@ -264,17 +309,23 @@ def figure_s3(output_dir: Path) -> None:
         ax.text(0.50, y - 0.021, f"n = {count:,} {unit}", ha="center", va="center", color=text_color, fontsize=9)
         if index < len(expected) - 1:
             next_y = y_positions[index + 1]
-            arrow = FancyArrowPatch((0.50, y - 0.052), (0.50, next_y + 0.052), arrowstyle="-|>", mutation_scale=11, lw=0.8, color=COLORS["gray"])
+            arrow = FancyArrowPatch((0.50, y - 0.046), (0.50, next_y + 0.046), arrowstyle="-|>", mutation_scale=11, lw=0.8, color=COLORS["gray"])
             ax.add_patch(arrow)
             ax.text(0.855, (y + next_y) / 2, removal_labels[index], ha="left", va="center", fontsize=7.7, color=COLORS["dark"])
     ax.set_title("Data-screening workflow for the formal 30-min modeling panel", loc="left", pad=8, fontsize=11)
     fig.subplots_adjust(left=0.03, right=0.76, top=0.93, bottom=0.03)
-    save_figure(fig, output_dir, "figS3_screening_flow")
+    save_figure(fig, output_dir, "figS3_screening_flow", formal_assets_dir, "Figure_S3")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "results" / "reproduced")
+    parser.add_argument(
+        "--formal-assets-dir",
+        type=Path,
+        default=SUPPLEMENT_DIR / "figures",
+        help="write submission-ready Figure_S1--S3 assets in PNG, SVG, PDF and RGB TIFF formats",
+    )
     parser.add_argument("--no-figures", action="store_true", help="verify all supplementary assets without writing figures")
     return parser.parse_args()
 
@@ -292,7 +343,7 @@ def main() -> None:
     peaks = pd.read_csv(PEAKS_PATH)
     metadata = pd.read_csv(METADATA_PATH)
     screening = pd.read_csv(SCREENING_PATH)
-    if (len(ecg), len(imu), len(peaks), len(metadata), len(screening)) != (10241, 200, 70, 1, 6):
+    if (len(ecg), len(imu), len(peaks), len(metadata), len(screening)) != (10241, 200, 70, 1, 7):
         raise AssertionError("supplementary source-asset dimensions differ from the deposited release")
     coverage_scope = (
         panel["experimental_unit"].nunique(),
@@ -301,13 +352,13 @@ def main() -> None:
     )
     if coverage_scope != (24, 40, 12):
         raise AssertionError(f"unexpected coverage scope: {coverage_scope}")
-    if screening.sort_values("stage_order")["retained_count"].astype(int).tolist() != [34109, 34026, 33993, 30000, 4380, 4079]:
+    if screening.sort_values("stage_order")["retained_count"].astype(int).tolist() != [34109, 34026, 33993, 30000, 4518, 4380, 4079]:
         raise AssertionError("screening-count sequence mismatch")
 
     if not args.no_figures:
-        figure_s1(args.output_dir)
-        figure_s2(panel, args.output_dir)
-        figure_s3(args.output_dir)
+        figure_s1(args.output_dir, args.formal_assets_dir)
+        figure_s2(panel, args.output_dir, args.formal_assets_dir)
+        figure_s3(args.output_dir, args.formal_assets_dir)
     print("SUPPLEMENTARY_REPRODUCIBILITY_PASS figures=S1,S2,S3")
 
 

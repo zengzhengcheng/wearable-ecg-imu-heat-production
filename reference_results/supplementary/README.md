@@ -6,6 +6,7 @@ These compact files support direct reproduction of manuscript Figures S1--S3 wit
 - `signal_quality_imu.csv`: simultaneous tri-axial acceleration segment (10 Hz).
 - `signal_quality_rpeaks.csv`: two software-generated R-peak series used for display and the cross-detector bSQI check. These are not manually adjudicated annotations or a gold standard.
 - `signal_quality_metadata.csv`: animal, chamber, date, segment and summary metadata for Figure S1.
-- `screening_counts.csv`: retained counts and defensible exclusion descriptions for Figure S3.
+- `screening_counts.csv`: the complete locked screening chain for Figure S3, including the 4,518 candidate-window stage.
+- `figures/`: submission-ready Figures S1--S3 in PNG, SVG, PDF and white-background RGB TIFF (600 dpi) formats.
 
 Figure S2 is derived directly from the deposited formal panel at `data/analysis/modeling_panel_30min.csv`. The public workflow intentionally excludes superseded Optuna and date-holdout supplementary figures.

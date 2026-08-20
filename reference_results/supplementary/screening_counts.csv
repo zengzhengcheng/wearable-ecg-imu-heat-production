@@ -3,5 +3,6 @@ stage_order,stage,retained_count,count_unit,removed_from_previous,notes
 2,Positive heat production (HP > 0),34026,records,83,Non-positive HP records excluded.
 3,Deduplicated pig-by-timestamp records,33993,records,33,Duplicate pig-by-timestamp records excluded.
 4,Source-level quality control,30000,records,3993,Required positive body weight and IMU coverage >= 50%.
-5,30-min windows with >= 3 source records,4380,windows,,138 candidate bins and 210 source records were excluded at window formation.
-6,Final windows with valid-HR fraction >= 50%,4079,windows,301,218 of the excluded windows had no valid heart-rate data.
+5,Candidate 30-min windows,4518,windows,,"4,518 candidate windows formed from 30,000 source-level-QC records."
+6,30-min windows with >= 3 source records,4380,windows,138,"138 incomplete candidate windows excluded; 4,380 complete windows retained."
+7,Final windows with valid-HR fraction >= 50%,4079,windows,301,301 windows excluded for insufficient heart-rate coverage; 218 had no valid heart-rate data.
