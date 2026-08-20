@@ -1,0 +1,4 @@
+stage_order,stage,evaluation_scope,pigs,n,r2_HP,MAE_kcal_per_30min,RMSE_kcal_per_30min
+1,"All stages, uncalibrated",all phases,12,4079,0.6753180182365188,4.3219335588859416,6.183082317765306
+2,"Follow-up, uncalibrated",phase 2/3/4,12,2470,0.7101946227116984,4.177709565275665,6.049323315170574
+3,"Follow-up, individualized calibration",phase 2/3/4,12,2470,0.7998914733588931,3.5586833039959065,5.026739438205551

@@ -41,9 +41,10 @@ from pathlib import Path
 import formal_model_core as core
 
 
-DEFAULT_ROOT = Path(__file__).resolve().parents[1] / "results"
-DEFAULT_PANEL = DEFAULT_ROOT / "2026_diet_30min_matched.csv"
-DEFAULT_GROUPS = DEFAULT_ROOT / "feature_groups.json"
+PROJECT = Path(__file__).resolve().parents[1]
+DEFAULT_ROOT = PROJECT / "results"
+DEFAULT_PANEL = PROJECT / "data" / "analysis" / "modeling_panel_30min.csv"
+DEFAULT_GROUPS = PROJECT / "data" / "analysis" / "feature_groups.json"
 DEFAULT_OUT = DEFAULT_ROOT / "confirm_model_results"
 
 NEW_CANDIDATES = [

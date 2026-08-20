@@ -1,0 +1,13 @@
+pig,outer_fold_as_test,n_test_windows,experimental_units,chambers,periods,grouping_rule
+pig_01,3,107,A1_p8,A1,8,five-fold outer split grouped by true pig identity
+pig_02,3,184,B2_p7,B2,7,five-fold outer split grouped by true pig identity
+pig_11,5,466,A1_p6|B1_p4|B2_p2,A1|B1|B2,2|4|6,five-fold outer split grouped by true pig identity
+pig_12,2,180,B1_p7,B1,7,five-fold outer split grouped by true pig identity
+pig_13,3,533,A1_p5|B1_p3|B2_p1,A1|B1|B2,1|3|5,five-fold outer split grouped by true pig identity
+pig_14,1,553,A1_p3|B1_p1|B2_p5,A1|B1|B2,1|3|5,five-fold outer split grouped by true pig identity
+pig_15,5,487,A1_p1|B1_p5|B2_p3,A1|B1|B2,1|3|5,five-fold outer split grouped by true pig identity
+pig_16,4,519,A1_p2|B1_p6|B2_p4,A1|B1|B2,2|4|6,five-fold outer split grouped by true pig identity
+pig_17,4,214,A1_p7,A1,7,five-fold outer split grouped by true pig identity
+pig_18,1,157,B2_p8,B2,8,five-fold outer split grouped by true pig identity
+pig_19,2,539,A1_p4|B1_p2|B2_p6,A1|B1|B2,2|4|6,five-fold outer split grouped by true pig identity
+pig_20,1,140,B1_p8,B1,8,five-fold outer split grouped by true pig identity
