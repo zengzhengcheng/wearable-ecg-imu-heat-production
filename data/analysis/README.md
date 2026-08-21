@@ -12,6 +12,8 @@
 
 ## Predictor boundary
 
-The locked confirmation library may use context, chamber environment, HR/HRV, IMU, body weight and prespecified feeding-protocol features, as indicated in the dictionary. `diet_code`, identity/grouping fields, targets and lineage fields are not predictors. Planned feed is offered feed, not measured intake; meal-event variables derive from protocol times, not observed feeding events.
+The locked confirmation library uses ECG/HRV, IMU, body weight, calorimetry-related time/phase and source-window fields, respiration-chamber identity, chamber temperature and relative humidity. Inner-selected branches may additionally use prespecified feeding-protocol features, as indicated in the dictionary. `diet_code`, pig identity/grouping fields, targets and lineage fields are not predictors. Planned feed is offered feed, not measured intake; meal-event variables derive from protocol times, not observed feeding events.
 
 The first 2 d/follow-up/fasting scope is defined by the phase fields. Formal outer folds group by `pig`; date grouping columns are retained only for lineage and are not part of the locked evaluation.
+
+These data support pig-grouped internal validation within the A1/B1/B2 facility. Because chamber identity and chamber environmental measurements are model inputs, the locked results must not be presented as wearable-only or cross-facility validation.
