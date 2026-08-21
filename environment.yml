@@ -8,6 +8,7 @@ dependencies:
   - scipy=1.14
   - scikit-learn=1.5
   - matplotlib=3.9
+  - pillow=11.0
   - openpyxl=3.1
   - lightgbm=4.5
   - xgboost=2.1

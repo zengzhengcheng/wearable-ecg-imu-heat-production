@@ -32,7 +32,11 @@ python scripts/03_reproduce_results_and_figures.py
 python scripts/04_reproduce_supplementary_figures.py
 ```
 
-This verifies the four locked R² values and writes main Figures 2–4 plus supplementary Figures S1–S3 under `results/reproduced/`. It does not retrain, search models or tune calibration. The default public reproduction route is the locked chamber-informed submission workflow; exploratory analyses are not substituted for these results.
+As a pip alternative, start from a Python 3.11 environment and run `python -m pip install -r requirements.txt`.
+
+This verifies the four locked R² values and writes main Figures 2–4 plus supplementary Figures S1–S3 under `results/reproduced/`. It does not retrain, search models or tune calibration. The main script writes three reproduced metric tables and PNG/SVG/PDF versions of Figures 2–4; a successful run ends with `REPRODUCIBILITY_PASS figures=2,3,4`.
+
+The default public entry point is limited to the locked chamber-informed submission workflow. Strict-v2, Sequence-6, unified-target and other stopped exploratory branches are not used by this workflow and are not presented as manuscript results. Any retained exploratory material must remain clearly labeled as research/archive content outside the default reproduction route.
 
 ### Rebuild from source measurements
 
@@ -70,7 +74,7 @@ Model evaluation is grouped by true pig identity. Do not substitute a date holdo
 - Individual calibration: for each held-out experimental unit, the ratio of mean observed to mean predicted HP over phases 0–1 (first 2 d) is shrunk with fixed `alpha = 0.5`; only the 1,718 fed measurement windows in phases 2–3 (888 + 830) are adjusted, while all 752 phase-4 fasting predictions remain unchanged. The reported post-adaptation metrics use all 2,470 phase-2/3/4 windows.
 - Dietary treatment code is audit metadata and is excluded from every formal predictor branch.
 - Planned feed and protocol meal timing describe offered feed and scheduled meals, not measured intake events.
-- Every locked fold component receives `chamber` and `phase_label` as one-hot categorical inputs and receives `is_adaptation`, `is_formal`, `is_fasting`, `day_in_phase` and `win_s` as numeric inputs. These are not audit-only fields. `win_s` is the source calorimetry-record interval used to set the backward sensor-extraction duration; prospective wearable-only use must supply or prespecify the corresponding window duration.
+- Every locked fold component receives `chamber` and `phase_label` as one-hot categorical inputs, `is_adaptation`, `is_formal`, `is_fasting`, `day_in_phase` and `win_s` as numeric inputs, and chamber temperature (`小室温度(℃)`) and relative humidity (`小室湿度(%)`) among its numeric sensor/context inputs. These are not audit-only fields. `win_s` is the source calorimetry-record interval used to set the backward sensor-extraction duration; prospective wearable-only use must supply or prespecify the corresponding window duration.
 
 ## Locked manuscript results
 

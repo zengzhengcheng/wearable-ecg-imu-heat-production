@@ -12,7 +12,7 @@ The raw or near-raw ECG and IMU acquisitions, extracted sensor data, 5-min respi
 
 ## AI-assisted tools disclosure
 
-OpenAI Codex assisted with the development and reproducibility checking of analysis code. All code, analytical decisions, and reported results were reviewed and verified by the authors.
+OpenAI Codex was used to assist with the development and reproducibility checking of analysis code. All code and analytical results were reviewed and verified by the authors, who retain full responsibility for the work.
 
 ## Interpretation boundary
 

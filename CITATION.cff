@@ -1,7 +1,8 @@
 cff-version: 1.2.0
-message: "If you use this code, please cite the associated article."
+message: "If you use this software or its compact analysis assets, please cite the associated article and this repository; cite the ScienceDB dataset when using deposited data."
 title: "Wearable ECG–IMU sensing: Predicting heat production in growing pigs with short-term calorimetry calibration"
 type: software
+abstract: "Reproducibility code, compact analysis data and locked prediction assets for pig-grouped internal validation of heat-production prediction within a three-chamber respiration-calorimetry facility."
 authors:
   - family-names: "Zeng"
     given-names: "Zhengcheng"
@@ -9,3 +10,11 @@ version: 1.0.0
 date-released: 2026-08-19
 license: MIT
 repository-code: "https://github.com/zengzhengcheng/wearable-ecg-imu-heat-production"
+url: "https://github.com/zengzhengcheng/wearable-ecg-imu-heat-production"
+keywords:
+  - animal monitoring
+  - electrocardiography
+  - inertial measurement unit
+  - indirect calorimetry
+  - heat production
+  - reproducible research
