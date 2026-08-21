@@ -4,7 +4,7 @@ This file provides manuscript-ready wording aligned with the public repository. 
 
 ## Code availability
 
-Analysis code, the compact analysis-ready modeling panel, pig-grouped outer-fold assignments, saved out-of-fold predictions, and scripts for reproducing the reported metrics and Figures 2–4 are available at https://github.com/zengzhengcheng/wearable-ecg-imu-heat-production. The default saved-prediction workflow reproduces the locked results from the model with respiration chamber information without model retraining or hyperparameter search. Source code is available under the MIT License; the compact research-data and analysis assets in `data/analysis/` and `reference_results/` are available under CC BY 4.0.
+Analysis code, the compact analysis-ready modeling panel, pig-grouped outer-fold assignments, saved out-of-fold predictions, and scripts for reproducing the reported metrics and Figures 2–4 are available at https://github.com/zengzhengcheng/wearable-ecg-imu-heat-production. The default saved-prediction workflow reproduces the locked results from the model with respiration chamber information indicating A1, B1, or B2, without model retraining or hyperparameter search. Source code is available under the MIT License; the compact research-data and analysis assets in `data/analysis/` and `reference_results/` are available under CC BY 4.0.
 
 ## Data availability
 
