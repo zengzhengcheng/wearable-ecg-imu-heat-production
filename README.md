@@ -6,7 +6,7 @@ The study combines ECG, 10 Hz IMU and open-circuit respiration-calorimetry measu
 
 ## Submission scope and interpretation
 
-The locked manuscript workflow is **chamber-informed**. Its model inputs include ECG/heart-rate and HRV descriptors, IMU-derived activity descriptors, body weight, calorimetry-related time/phase and source-window information, respiration chamber information indicating A1, B1, or B2, chamber temperature and relative humidity. Some inner-selected components also use prespecified offered-feed and protocol meal-time variables; dietary treatment identity (`diet_code`) is not a predictor. The complete per-fold input lists are deposited in [`reference_results/locked_model_features_by_fold.csv`](reference_results/locked_model_features_by_fold.csv) and can be checked without fitting a model by running `scripts/05_audit_locked_model_inputs.py`.
+The locked manuscript workflow uses **respiration chamber information indicating A1, B1, or B2**. Its model inputs include ECG/heart-rate and HRV descriptors, IMU-derived activity descriptors, body weight, calorimetry-related time/phase and source-window information, that respiration chamber information, chamber temperature and relative humidity. Some inner-selected components also use prespecified offered-feed and protocol meal-time variables; dietary treatment identity (`diet_code`) is not a predictor. The complete per-fold input lists are deposited in [`reference_results/locked_model_features_by_fold.csv`](reference_results/locked_model_features_by_fold.csv) and can be checked without fitting a model by running `scripts/05_audit_locked_model_inputs.py`.
 
 Accordingly, the reported values are **pig-grouped internal-validation results within the current A1/B1/B2 three-chamber facility**. They are not evidence of validation in an independent facility and should not be described as a wearable-only or cross-facility model.
 
@@ -36,7 +36,7 @@ As a pip alternative, start from a Python 3.11 environment and run `python -m pi
 
 This verifies the four locked R² values and writes main Figures 2–4 plus supplementary Figures S1–S3 under `results/reproduced/`. It does not retrain, search models or tune calibration. The main script writes three reproduced metric tables and PNG/SVG/PDF versions of Figures 2–4; a successful run ends with `REPRODUCIBILITY_PASS figures=2,3,4`.
 
-The default public entry point is limited to the locked chamber-informed submission workflow. Strict-v2, Sequence-6, unified-target and other stopped exploratory branches are not used by this workflow and are not presented as manuscript results. Any retained exploratory material must remain clearly labeled as research/archive content outside the default reproduction route.
+The default public entry point is limited to the locked submission workflow with respiration chamber information. Strict-v2, Sequence-6, unified-target and other stopped exploratory branches are not used by this workflow and are not presented as manuscript results. Any retained exploratory material must remain clearly labeled as research/archive content outside the default reproduction route.
 
 ### Rebuild from source measurements
 
@@ -80,8 +80,8 @@ Model evaluation is grouped by true pig identity. Do not substitute a date holdo
 
 | Result | Scope | R² |
 |---|---|---:|
-| Chamber-informed model, full-period internal validation | all 4,079 windows, uncalibrated | 0.675 |
-| Chamber-informed model, post-adaptation internal validation | 2,470 follow-up windows, uncalibrated | 0.710 |
+| Model with respiration chamber information, full-period internal validation | all 4,079 windows, uncalibrated | 0.675 |
+| Model with respiration chamber information, post-adaptation internal validation | 2,470 follow-up windows, uncalibrated | 0.710 |
 | Same model after fixed first-2-d post-prediction calibration | same 2,470 follow-up windows | 0.800 |
 | Traditional baseline (heart rate + ODBA, Ridge) | same 2,470 follow-up windows | 0.432 |
 
