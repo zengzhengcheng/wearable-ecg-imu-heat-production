@@ -16,7 +16,7 @@ OpenAI Codex was used to assist with the development and reproducibility checkin
 
 ## Interpretation boundary
 
-The locked model uses ECG/HRV, IMU, body weight, calorimetry-related time/phase and source-window information, respiration-chamber identity, chamber temperature and relative humidity; some inner-selected components also use prespecified offered-feed and protocol meal-time variables. Its reported R² values of 0.675, 0.710 and 0.800 are pig-grouped internal-validation results within the A1/B1/B2 three-chamber facility. The 0.800 result applies a frozen post-prediction correction using measured HP from the first 2 d of the held-out experimental unit and does not retrain the predictive model.
+The locked model uses ECG/HRV, IMU, body weight, calorimetry-related time/phase and source-window information, respiration chamber information indicating A1, B1, or B2, chamber temperature and relative humidity; some inner-selected components also use prespecified offered-feed and protocol meal-time variables. Its reported R² values of 0.675, 0.710 and 0.800 are pig-grouped internal-validation results within the A1/B1/B2 three-chamber facility. The 0.800 result applies a frozen post-prediction correction using measured HP from the first 2 d of the held-out experimental unit and does not retrain the predictive model.
 
 ## Software version note
 
